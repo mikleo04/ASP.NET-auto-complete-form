@@ -68,3 +68,37 @@
     </div>
 </div>
 
+<script>
+    let kd_negara;
+    $(document).ready(function () {
+        $("#countryInput").autocomplete({
+            source: function (request, response) {
+              const input = request.term;
+              console.log(input);
+             
+            $.ajax({
+              url: `http://localhost:3000/negara?ur_negara=${encodeURIComponent(input)}`,
+              type: "GET",
+              dataType: "json",
+              success: function (data) {
+                const suggestions = [];
+                $.each(data, function (index, country) {
+                  suggestions.push({ name: country.name, value: country.name});
+                  kd_negara = country.kd_negara;
+                });
+                console.log(suggestions);
+                response(suggestions);
+              },
+              error: function (xhr, status, error) {
+                console.error("Error fetching countries:", error);
+              }
+            });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+              $("#countryInput").val(ui.item.value);
+              return false;
+            }
+        });
+    });
+</script>
