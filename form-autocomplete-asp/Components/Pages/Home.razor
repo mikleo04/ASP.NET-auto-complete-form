@@ -100,5 +100,34 @@
               return false;
             }
         });
+        
+        $("#pelabuhanInput").autocomplete({
+            source: function (request, response) {
+              const input = request.term;
+              console.log(input);
+             
+            $.ajax({
+              url: `http://localhost:3000/pelabuhan?kd_negara=${encodeURIComponent(kd_negara)}&ur_pelabuhan=${encodeURIComponent(input)}`,
+              type: "GET",
+              dataType: "json",
+              success: function (data) {
+                const suggestions = [];
+                $.each(data, function (index, country) {
+                  suggestions.push({ label: country.ur_pelabuhan, value: country.ur_pelabuhan });
+                });
+                console.log(suggestions);
+                response(suggestions);
+              },
+              error: function (xhr, status, error) {
+                console.error("Error fetching countries:", error);
+              }
+            });
+            },
+            minLength: 3,
+            select: function (event, ui) {
+              $("#pelabuhanInput").val(ui.item.value);
+              return false;
+            }
+        });
     });
 </script>
