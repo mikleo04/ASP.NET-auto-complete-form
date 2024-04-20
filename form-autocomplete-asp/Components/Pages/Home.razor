@@ -148,6 +148,23 @@
                     }
                 });
             }
-        });     
+        });
+        
+        function handleResult() {
+            const harga = parseFloat($("#harga").val()) || 0;
+            const tarif = parseFloat($("#tarif").val()) || 0;
+
+            let result = harga;
+            if (tarif !== 0) {
+                result = harga * (tarif / 100);
+            }
+
+            $("#result").val(result);
+        }
+        
+        $("#harga, #tarif").on("input", function() {
+            handleResult();
+        });
+        
     });
 </script>
