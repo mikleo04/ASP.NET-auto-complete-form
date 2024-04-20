@@ -1,60 +1,115 @@
 ﻿@page "/"
+@using System.ComponentModel.DataAnnotations
 
+@code
+{
+    HomeModel _homeModel = new HomeModel();
+    string errorMessage = "";
+    string successMessgae = "";
+
+    string GetValidationMessage(string property)
+    {
+        var validationResults = new List<ValidationResult>();
+        var propertyInfo = typeof(HomeModel).GetProperty(property);
+        if (propertyInfo != null)
+        {
+            var propertyValue = propertyInfo.GetValue(_homeModel);
+
+            if (!Validator.TryValidateProperty(propertyValue, new ValidationContext(_homeModel, null, null) {MemberName = property}, validationResults))
+            {
+                var validationMessage = validationResults.First().ErrorMessage;
+                if (validationMessage != null) return validationMessage;
+            }
+        }
+
+        return null!;
+    }
+
+    void HandleSubmit()
+    {
+        if (Validator.TryValidateObject(_homeModel, new ValidationContext(_homeModel, null, null), null))
+        {
+            successMessgae = "Form Berhasil";
+            _homeModel = new HomeModel();
+        }
+        else
+        {
+            errorMessage = "validasi gagal";
+        }
+    }
+    
+}
 <PageTitle>Home</PageTitle>
 
 <div class="row">
     <div class="col-lg-5 mx-auto rounded border p-3">
         <h2 class="text-center mb-5">Autocomplete Form</h2>
         
-        <form method="post">
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>@errorMessage</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (!string.IsNullOrEmpty(successMessgae))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>@successMessgae</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        <form @onsubmit="HandleSubmit">
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Negara</label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Negara" type="text" id="countryInput" name="countryInput"/>
-                    <span asp-validation-for="Negara" class="text-danger"></span>
+                    <input class="form-control" @bind="_homeModel.Negara" type="text" id="countryInput" name="countryInput"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.Negara)</span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Pelabuhan</label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Pelabuhan" type="text" id="pelabuhanInput" name="pelabuhanInput"/>
-                    <span asp-validation-for="Pelabuhan" class="text-danger"></span>
+                    <input class="form-control" @bind="_homeModel.Pelabuhan" type="text" id="pelabuhanInput" name="pelabuhanInput"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.Pelabuhan)</span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label">Barang</label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Barang" type="text" id="barang" name="barang"/>
-                    <span asp-validation-for="Barang" class="text-danger"></span>
+                    <input class="form-control" @bind="_homeModel.Barang" type="text" id="barang" name="barang"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.Barang)</span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" asp-for="DetailBarang" id="detailBarang" name="detailBarang"></textarea>
-                    <span asp-validation-for="DetailBarang" class="text-danger"></span>
+                    <textarea class="form-control" @bind="_homeModel.DetailBarang" id="detailBarang" name="detailBarang"></textarea>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.DetailBarang)</span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Harga</label>
                 <div class="col-sm-8">
-                    <input class="form-control" type="number" asp-for="Harga" id="harga" name="harga"/>
-                    <span asp-validation-for="Harga" class="text-danger"></span>
+                    <input class="form-control" type="number" @bind="_homeModel.Harga" id="harga" name="harga"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.Harga)</span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Tarif Bea Masuk</label>
                 <div class="col-sm-7">
-                    <input class="form-control" asp-for="TarifBeaMasuk" id="tarif" name="tarif"/>
-                    <span asp-validation-for="TarifBeaMasuk" class="text-danger"></span>
+                    <input class="form-control" @bind="_homeModel.TarifBeaMasuk" id="tarif" name="tarif"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.TarifBeaMasuk!)</span>
                 </div>
                 <span class="col-sm-1">%</span>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Result" id="result" name="result"/>
-                    <span asp-validation-for="Result" class="text-danger"></span>
+                    <input class="form-control" @bind="_homeModel.Result" id="result" name="result"/>
+                    <span class="text-danger">@GetValidationMessage(_homeModel.Result)</span>
                 </div>
             </div>
             <div class="row">
