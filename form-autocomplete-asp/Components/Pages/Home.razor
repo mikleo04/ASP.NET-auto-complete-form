@@ -147,6 +147,21 @@
                         console.log("Error fetching detail barang", error);
                     }
                 });
+                $.ajax({
+                    url: `${BASE_URL}/tarif?hs_code=${encodeURIComponent(inputValue)}`,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        let tariffData;
+                       $.each(data, function (index, tariff) {
+                           tariffData = tariff.rate_bea_masuk;
+                       });
+                     $("#tarif").val(tariffData || 0);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error fetching detail barang", error);
+                    }
+                });
             }
         });
         
