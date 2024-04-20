@@ -22,30 +22,30 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label class="col-sm-4 col-form-label ">Barang</label>
+                <label class="col-sm-4 col-form-label">Barang</label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Barang"/>
+                    <input class="form-control" asp-for="Barang" type="text" id="barang" name="barang"/>
                     <span asp-validation-for="Barang" class="text-danger"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" asp-for="DetailBarang"></textarea>
+                    <textarea class="form-control" asp-for="DetailBarang" id="detailBarang" name="detailBarang"></textarea>
                     <span asp-validation-for="DetailBarang" class="text-danger"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Harga</label>
                 <div class="col-sm-8">
-                    <input class="form-control" type="number" asp-for="Harga"/>
+                    <input class="form-control" type="number" asp-for="Harga" id="harga" name="harga"/>
                     <span asp-validation-for="Harga" class="text-danger"></span>
                 </div>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Tarif Bea Masuk</label>
                 <div class="col-sm-7">
-                    <input class="form-control" asp-for="TarifBeaMasuk"/>
+                    <input class="form-control" asp-for="TarifBeaMasuk" id="tarif" name="tarif"/>
                     <span asp-validation-for="TarifBeaMasuk" class="text-danger"></span>
                 </div>
                 <span class="col-sm-1">%</span>
@@ -53,7 +53,7 @@
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
                 <div class="col-sm-8">
-                    <input class="form-control" asp-for="Result"/>
+                    <input class="form-control" asp-for="Result" id="result" name="result"/>
                     <span asp-validation-for="Result" class="text-danger"></span>
                 </div>
             </div>
@@ -69,24 +69,24 @@
 </div>
 
 <script>
-    let kd_negara;
     $(document).ready(function () {
+        let kd_negara;
+        const BASE_URL = "http://localhost:3000";
         $("#countryInput").autocomplete({
             source: function (request, response) {
               const input = request.term;
               console.log(input);
              
             $.ajax({
-              url: `http://localhost:3000/negara?ur_negara=${encodeURIComponent(input)}`,
+              url: `${BASE_URL}/negara?ur_negara=${encodeURIComponent(input)}`,
               type: "GET",
               dataType: "json",
               success: function (data) {
                 const suggestions = [];
                 $.each(data, function (index, country) {
-                  suggestions.push({ name: country.name, value: country.name});
+                  suggestions.push({value: country.name});
                   kd_negara = country.kd_negara;
                 });
-                console.log(suggestions);
                 response(suggestions);
               },
               error: function (xhr, status, error) {
@@ -104,18 +104,16 @@
         $("#pelabuhanInput").autocomplete({
             source: function (request, response) {
               const input = request.term;
-              console.log(input);
              
             $.ajax({
-              url: `http://localhost:3000/pelabuhan?kd_negara=${encodeURIComponent(kd_negara)}&ur_pelabuhan=${encodeURIComponent(input)}`,
+              url: `${BASE_URL}/pelabuhan?kd_negara=${encodeURIComponent(kd_negara)}&ur_pelabuhan=${encodeURIComponent(input)}`,
               type: "GET",
               dataType: "json",
               success: function (data) {
                 const suggestions = [];
-                $.each(data, function (index, country) {
-                  suggestions.push({ label: country.ur_pelabuhan, value: country.ur_pelabuhan });
+                $.each(data, function (index, harbor) {
+                  suggestions.push({ value: harbor.ur_pelabuhan });
                 });
-                console.log(suggestions);
                 response(suggestions);
               },
               error: function (xhr, status, error) {
@@ -129,5 +127,27 @@
               return false;
             }
         });
+        
+        $("#barang").on("input", function () {
+            const inputValue = $(this).val();
+            if (inputValue) {
+                $.ajax({
+                    url: `${BASE_URL}/barang?hs_code=${encodeURIComponent(inputValue)}`,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        let detailBarang;
+                        $.each(data, function (index, item) {
+                          detailBarang = item.details;
+                        });
+                        const detailBarangValue = detailBarang.join('\n');
+                        $("#detailBarang").val(detailBarangValue);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error fetching detail barang", error);
+                    }
+                });
+            }
+        });     
     });
 </script>
