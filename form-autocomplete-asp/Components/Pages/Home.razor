@@ -42,8 +42,7 @@
 <PageTitle>Home</PageTitle>
 
 <div class="row">
-    <div class="col-lg-5 mx-auto rounded border p-3">
-        <h2 class="text-center mb-5">Autocomplete Form</h2>
+    <div class="col-lg-8 mx-auto rounded border p-3">
         
         @if (!string.IsNullOrEmpty(errorMessage))
         {
@@ -86,7 +85,7 @@
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" @bind="_homeModel.DetailBarang" id="detailBarang" name="detailBarang"></textarea>
+                    <textarea rows="6" class="form-control" @bind="_homeModel.DetailBarang" id="detailBarang" name="detailBarang"></textarea>
                     <span class="text-danger">@GetValidationMessage(_homeModel.DetailBarang)</span>
                 </div>
             </div>
@@ -99,11 +98,11 @@
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label ">Tarif Bea Masuk</label>
-                <div class="col-sm-7">
+                <div class="col-sm-6">
                     <input class="form-control" @bind="_homeModel.TarifBeaMasuk" id="tarif" name="tarif"/>
                     <span class="text-danger">@GetValidationMessage(_homeModel.TarifBeaMasuk!)</span>
                 </div>
-                <span class="col-sm-1">%</span>
+                <span class="col-sm-1 card bg-secondary bg-opacity-50">%</span>
             </div>
             <div class="row mb-3">
                 <label class="col-sm-4 col-form-label "></label>
